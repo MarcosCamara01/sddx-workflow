@@ -1,0 +1,25 @@
+export const COMMAND_NAMES = [
+  'bootstrap',
+  'ask',
+  'assume',
+  'bugfix',
+  'refactor',
+  'spec-new',
+  'spec-plan',
+  'spec-tasks',
+  'review',
+  'finish',
+  'spec-amend',
+  'impl-gap',
+  'spec-restore',
+  'research',
+  'verify',
+  'scan',
+  'conventions-sync',
+  'spec-status',
+  'spec-conflicts',
+  'spec-clarify',
+  'spec-analyze',
+] as const;
+
+export type CommandName = typeof COMMAND_NAMES[number];

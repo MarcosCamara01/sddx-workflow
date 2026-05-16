@@ -1,30 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { copyTemplate } from '../utils';
-
-const COMMAND_NAMES = [
-  'bootstrap',
-  'ask',
-  'assume',
-  'bugfix',
-  'refactor',
-  'spec-new',
-  'spec-plan',
-  'spec-tasks',
-  'review',
-  'finish',
-  'spec-amend',
-  'impl-gap',
-  'spec-restore',
-  'research',
-  'verify',
-  'scan',
-  'conventions-sync',
-  'spec-status',
-  'spec-conflicts',
-  'spec-clarify',
-  'spec-analyze',
-] as const;
+import { COMMAND_NAMES } from './command-names';
 
 const claudeCommands = COMMAND_NAMES.map(name => ({
   src: `claude-commands/${name}.md`,
@@ -52,13 +29,6 @@ const WORKFLOW_FILES: Array<{ src: string; dest: string }> = [
   { src: 'zed-rules/sddx-workflow.md', dest: '.rules' },
 ];
 
-function ensureSkillDir(dest: string): void {
-  const dir = path.dirname(dest);
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir, { recursive: true });
-  }
-}
-
 export function updateCommand(): void {
   const cwd = process.cwd();
 
@@ -70,21 +40,16 @@ export function updateCommand(): void {
   console.log('');
   console.log('  SDD Workflow — updating workflow files');
   console.log('  (project-overview.md, conventions.md, CLAUDE.md, config.json, and domains are yours — untouched)');
+  console.log('  (only files that already exist are updated — run `init --force` to add new commands)');
   console.log('');
 
   let updated = 0;
   for (const file of WORKFLOW_FILES) {
     const dest = path.join(cwd, file.dest);
 
-    if (file.dest.startsWith('.agents/skills/')) {
-      if (!fs.existsSync(path.join(cwd, '.agents/skills'))) continue;
-      ensureSkillDir(dest);
-    }
-
-    const parentDirExists = fs.existsSync(path.dirname(dest));
-    const fileExists = fs.existsSync(dest);
-
-    if (!fileExists && !parentDirExists) continue;
+    // Only update files that already exist — never silently create new command files
+    // on old installs, as users may not have opted into the new commands.
+    if (!fs.existsSync(dest)) continue;
 
     copyTemplate(file.src, dest, true);
     updated++;

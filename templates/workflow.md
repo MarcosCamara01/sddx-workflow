@@ -205,8 +205,9 @@ Process:
 4. Record both questions and answers in a **Clarifications** section of `1-requirements.md` (append-only, dated)
 
 Rules:
-- `/spec-plan` must check for unanswered blocking questions and warn
-- Non-blocking questions can be left open if the plan documents the default chosen
+- Use the checkbox format: `- [ ] ⛔ BLOCKING — <question>` / `- [x] ⛔ BLOCKING — <question> → <answer>`; same for `⚠️ NON-BLOCKING`
+- `/spec-plan` must scan for `[ ] ⛔ BLOCKING` entries (unchecked blocking questions) and stop if any are found
+- Non-blocking questions without answers proceed with the documented default
 - This command modifies `1-requirements.md` only by appending to the Clarifications section — no other field is touched
 
 ---
@@ -218,7 +219,7 @@ Input: completed `specs/<name>/1-requirements.md`
 
 Process:
 1. Read requirements and acceptance criteria
-2. Check Clarifications section — if blocking questions remain unanswered, STOP and run /spec-clarify
+2. Check Clarifications section — if any `[ ] ⛔ BLOCKING` entry (unchecked blocking question) exists, STOP and run /spec-clarify
 3. Run /assume — list every assumption about requirements, codebase state, and technical decisions; STOP and wait for confirmation before continuing
 4. Consider the simplest approach that satisfies the requirements; if you reject it, explain why
 5. Analyze codebase impact
@@ -252,7 +253,7 @@ The plan must include:
 
 Input: approved `specs/<name>/2-plan.md`
 
-First action: invoke `sddx-workflow snapshot <name>` to capture the approved spec state in `.sdd/snapshots/<name>/<timestamp>/`. If the CLI is unavailable, skip silently.
+First action: invoke `sddx-workflow snapshot <name>` to capture the approved spec state in `.sdd/snapshots/<name>/<timestamp>/`. If the CLI is unavailable, warn the user that no snapshot was taken and proceed — do not abort, but make the missing safety net explicit.
 
 Rules:
 - One task at a time — complete it fully before moving to the next
@@ -294,6 +295,7 @@ Rules:
 - Never modify `1-requirements.md` or `2-plan.md` from this command
 - The agent's proposed resolution is always non-binding — only the human decides
 - Multiple gaps per feature are normal; keep numbering monotonic
+- **Solo mode exception:** If `.sdd/config.json` sets `"amendments": false` (Solo ceremony), and the gap requires a spec change, skip the formal CR process. Instead, present the proposed change directly to the user, wait for explicit approval, then apply it and document the decision in the gap entry under a **Resolution** field. The change must still be user-approved — "no formal CR" does not mean "decide silently".
 
 ---
 
@@ -382,9 +384,10 @@ Focus:
 - Confirm that the implementation feels like the simplest one that satisfies the requirements
 
 Rules:
-- This is a recommendation-only pass — `/review` does not enforce anything
-- If `/review` finds a structural issue, escalate to `/spec-amend` instead of editing
-- Minor stylistic changes are okay to apply directly when scoped within a few lines; otherwise note them and let the user decide
+- This is a read-only, recommendation-only pass — `/review` notes issues but does not apply changes
+- If `/review` finds a structural issue, escalate to `/spec-amend`
+- If `/review` finds minor follow-ups (naming, dead comment, etc.), record them as notes for the user to act on — file a separate `/bugfix` task if the user accepts them
+- `/review` never edits code or spec files directly
 
 ---
 
@@ -523,6 +526,8 @@ Snapshots capture the state of `1-requirements.md`, `2-plan.md`, and `3-tasks.md
 
 The `npx sddx-workflow init` prompt asks for a ceremony level. The choice lives in `.sdd/config.json` and informs which features apply by default.
 
+To change the ceremony level after initialization: `sddx-workflow set-ceremony <solo|team|enterprise>` — updates `config.json` and patches the header in this file.
+
 | Edition | Use when | Required flow for features | Optional features available |
 |---|---|---|---|
 | **Solo / MVP** | Single developer, prototyping, exploratory work | `/spec-plan` → `/spec-tasks` → `/finish` | `/spec-status`, `/research`, snapshots |
@@ -559,7 +564,7 @@ This table formalizes what the agent may read, edit, or create in each phase. Do
 | /spec-amend | ✓ | ✓ (with CR approval) | ✗ | CR record |
 | /spec-restore | ✓ | ✓ (overwrite from snapshot) | ✗ | None |
 | /verify | ✓ | ✗ | ✗ | Only `verify-report.md` |
-| /review | ✓ | ✗ | ✓ (only minor, scoped) | None |
+| /review | ✓ | ✗ | ✗ | None — notes only |
 | /spec-status, /spec-conflicts | ✓ | ✗ | ✗ | None (output is conversational) |
 | /spec-analyze | ✓ | ✗ | ✗ | Only `analysis.md` |
 | /bugfix | ✓ | ✗ | ✓ | Tests + fix |
@@ -583,6 +588,19 @@ The agent must not:
 8. **Make decisions about what is "good enough" structurally.** Structure is a human decision; flag it, do not absorb it.
 9. **Modify `.sdd/snapshots/` files.** They are the safety net; corrupting them defeats the purpose.
 10. **Move a spec to `_done/` before `/verify` and `/review` pass.** A spec is done when both have closed cleanly.
+
+---
+
+## Closing a Spec
+
+When `/verify` and `/review` have both closed cleanly for a spec:
+
+1. Move `specs/<feature>/` to `specs/_done/<feature>/`
+2. `/spec-status` no longer lists it (it excludes `_done/`)
+3. The snapshot in `.sdd/snapshots/<feature>/` is kept for audit — do not delete it
+4. Amendments (`amendments.md`) and gap records (`impl-gaps.md`) move with the spec folder
+
+The `_done/` folder is write-never during active development. Only fully shipped specs live there. Moving a spec there is a human action — the agent must not do it unilaterally.
 
 ---
 

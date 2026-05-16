@@ -55,28 +55,16 @@ Standard feature flow: `/spec-new` → `/spec-clarify` (Enterprise only) → `/s
 
 ## Per-Phase Permissions
 
-What the agent may do in each command. This is convention, not runtime enforcement — the agent is expected to comply.
+See `.sdd/workflow.md` §Per-Phase Permissions for the full table. Quick summary:
 
-| Command | Read specs | Edit specs | Edit code | Create files |
-|---|---|---|---|---|
-| `/bootstrap`, `/scan` | ✓ | ✗ | ✗ | Only docs / report files |
-| `/ask`, `/research` | ✓ | ✗ | ✗ | Only research / report files |
-| `/assume` | ✓ | ✗ | ✗ | None (conversational) |
-| `/spec-new` | ✓ | ✓ (initial drafts) | ✗ | Spec scaffold only |
-| `/spec-clarify` | ✓ | ✓ (Clarifications section only) | ✗ | None |
-| `/spec-plan` | ✓ | ✓ (`2-plan.md` + optional 2a/2b/2c) | ✗ | Plan + artifacts |
-| `/spec-tasks` | ✓ | ✓ (`3-tasks.md` checklist only) | ✓ | Code, tests, new modules |
-| `/impl-gap` | ✓ | ✓ (`impl-gaps.md` only) | ✗ | Gap report only |
-| `/spec-amend` | ✓ | ✓ (with CR approval) | ✗ | CR record |
-| `/spec-restore` | ✓ | ✓ (overwrite from snapshot) | ✗ | None |
-| `/verify` | ✓ | ✗ | ✗ | Only `verify-report.md` |
-| `/review` | ✓ | ✗ | ✓ (only minor, scoped) | None |
-| `/spec-status`, `/spec-conflicts` | ✓ | ✗ | ✗ | None |
-| `/spec-analyze` | ✓ | ✗ | ✗ | Only `analysis.md` |
-| `/bugfix` | ✓ | ✗ | ✓ | Tests + fix |
-| `/refactor` | ✓ | ✗ | ✓ | None |
-| `/conventions-sync` | ✓ | ✗ | ✗ | Only `conventions.md` (diff-approved) |
-| `/finish` | ✓ | ✗ | ✗ | Staging + commit only |
+| Command | Edit specs | Edit code |
+|---|---|---|
+| `/spec-plan` | ✓ (`2-plan.md` only) | ✗ |
+| `/spec-tasks` | ✓ (`3-tasks.md` checklist only) | ✓ |
+| `/impl-gap` | ✓ (`impl-gaps.md` only) | ✗ |
+| `/spec-amend` | ✓ (with CR approval) | ✗ |
+| `/verify`, `/review` | ✗ | ✗ |
+| `/bugfix`, `/refactor` | ✗ | ✓ |
 
 ## Files to Read Per Command
 
@@ -98,18 +86,11 @@ What context to load before running each command. Skip the rest — context budg
 
 ## Anti-Patterns
 
-The agent must not:
+See `.sdd/workflow.md` §Anti-Patterns for the full list. The three most critical:
 
-1. **Edit approved spec files silently.** Use `/spec-amend`.
+1. **Edit approved spec files silently.** Use `/spec-amend` (Team/Enterprise) or explicit user approval (Solo).
 2. **Improvise when the spec is ambiguous.** Use `/impl-gap` and stop.
-3. **Mark tasks complete without an observable artifact.** A code change, a test, a file.
-4. **Refactor adjacent code during a task.** Note it; do not change scope.
-5. **Add a dependency without surfacing it in `/research` or `/assume`.**
-6. **Batch tasks in `/spec-tasks`.** One at a time, finish then move on.
-7. **Skip `/verify` to jump to `/finish`.**
-8. **Decide structural matters silently.** Flag them; do not absorb.
-9. **Modify `.sdd/snapshots/` files.**
-10. **Move a spec to `_done/` before `/verify` and `/review` close cleanly.**
+3. **Skip `/verify` before `/finish`.** Mechanical checks exist to catch real problems.
 
 ## Active Specs
 

@@ -106,10 +106,18 @@ Scenario: <add one scenario per distinct behavior>
 ## Clarifications
 
 <!-- Populated by /spec-clarify (pre-plan) or appended by /spec-amend (post-approval).
-     Each entry is dated and identifies the question and the resolution.
+
+     Format — use checkboxes so /spec-plan can detect unanswered blocking questions:
+       - [ ] ⛔ BLOCKING — <question>
+       - [x] ⛔ BLOCKING — <question> → <answer>
+       - [ ] ⚠️ NON-BLOCKING — <question> (default if unanswered: <assumed default>)
+       - [x] ⚠️ NON-BLOCKING — <question> → <answer>
+
+     /spec-plan must stop if any "[ ] ⛔ BLOCKING" entry exists with no answer.
+     Non-blocking questions without an answer proceed with the stated default.
 
      Example:
-     - **2026-05-14** — Q: Does folder navigation count as "opening" a file? → A: No. Only files opened in the viewer count. Trigger surface stays narrow.
-     - **2026-05-14** — Q: Timestamp format? → A: Relative ("3 days ago"); switch to absolute on hover.
+     - [x] ⛔ BLOCKING — Does folder navigation count as "opening" a file? → No. Only files opened in the viewer count. Trigger surface stays narrow.
+     - [x] ⚠️ NON-BLOCKING — Timestamp format? → Relative ("3 days ago"); switch to absolute on hover.
 -->
 

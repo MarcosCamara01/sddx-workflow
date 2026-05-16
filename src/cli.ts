@@ -4,6 +4,7 @@ import { addCommand } from './commands/add';
 import { updateCommand } from './commands/update';
 import { statusCommand } from './commands/status';
 import { snapshotCommand } from './commands/snapshot';
+import { setCeremonyCommand } from './commands/set-ceremony';
 import { createRequire } from 'module';
 
 const pkg = createRequire(__filename)('../package.json') as { version: string };
@@ -44,5 +45,11 @@ program
   .option('--list', 'List existing snapshots for the feature instead of creating one')
   .addHelpText('after', '\nExamples:\n  $ sddx-workflow snapshot auth-refresh\n  $ sddx-workflow snapshot auth-refresh --list')
   .action(snapshotCommand);
+
+program
+  .command('set-ceremony [level]')
+  .description('Change the ceremony level for this project (solo | team | enterprise)')
+  .addHelpText('after', '\nExamples:\n  $ sddx-workflow set-ceremony team\n  $ sddx-workflow set-ceremony enterprise\n  $ sddx-workflow set-ceremony  # interactive prompt')
+  .action(setCeremonyCommand);
 
 program.parseAsync();

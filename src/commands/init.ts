@@ -2,6 +2,7 @@ import path from 'path';
 import fs from 'fs';
 import { checkbox, select } from '@inquirer/prompts';
 import { ensureDir, copyTemplate } from '../utils';
+import { COMMAND_NAMES } from './command-names';
 
 interface InitOptions {
   force?: boolean;
@@ -16,6 +17,13 @@ const CORE_FILES: Array<{ src: string; dest: string }> = [
   { src: 'specs/_template/1-requirements.md', dest: 'specs/_template/1-requirements.md' },
   { src: 'specs/_template/2-plan.md', dest: 'specs/_template/2-plan.md' },
   { src: 'specs/_template/3-tasks.md', dest: 'specs/_template/3-tasks.md' },
+  { src: 'specs/_template/amendments.md', dest: 'specs/_template/amendments.md' },
+  { src: 'specs/_template/impl-gaps.md', dest: 'specs/_template/impl-gaps.md' },
+  { src: 'specs/_template/verify-report.md', dest: 'specs/_template/verify-report.md' },
+  { src: 'specs/_template/analysis.md', dest: 'specs/_template/analysis.md' },
+  { src: 'specs/_template/2a-data-model.md', dest: 'specs/_template/2a-data-model.md' },
+  { src: 'specs/_template/2b-api-contracts.md', dest: 'specs/_template/2b-api-contracts.md' },
+  { src: 'specs/_template/2c-research.md', dest: 'specs/_template/2c-research.md' },
 ];
 
 type ProviderId = 'claude-code' | 'cursor' | 'windsurf' | 'copilot' | 'codex' | 'gemini' | 'zed';
@@ -25,30 +33,6 @@ interface Provider {
   dirs: string[];
   files: Array<{ src: string; dest: string }>;
 }
-
-const COMMAND_NAMES = [
-  'bootstrap',
-  'ask',
-  'assume',
-  'bugfix',
-  'refactor',
-  'spec-new',
-  'spec-plan',
-  'spec-tasks',
-  'review',
-  'finish',
-  'spec-amend',
-  'impl-gap',
-  'spec-restore',
-  'research',
-  'verify',
-  'scan',
-  'conventions-sync',
-  'spec-status',
-  'spec-conflicts',
-  'spec-clarify',
-  'spec-analyze',
-] as const;
 
 const claudeCommandFiles = COMMAND_NAMES.map(name => ({
   src: `claude-commands/${name}.md`,
