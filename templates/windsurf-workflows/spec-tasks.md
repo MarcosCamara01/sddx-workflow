@@ -1,12 +1,10 @@
 ---
-description: Execute approved plan one task at a time, TDD-first; snapshot first
+description: Execute approved plan one task at a time, TDD-first
 ---
 
 Execute the /spec-tasks command defined in .sdd/workflow.md.
 
 The spec name is whatever you typed after the command (e.g. `/spec-tasks auth-refresh`).
-
-First action: invoke `sddx-workflow snapshot <spec>` to capture the approved spec state. If the CLI is unavailable, warn the user that no snapshot was taken and proceed — do not abort, but make the missing safety net explicit.
 
 Then read the approved specs/<spec>/2-plan.md and execute tasks one at a time. Write the test first (red), implement until green, run the full suite, then move to the next task.
 

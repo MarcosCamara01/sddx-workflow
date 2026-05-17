@@ -5,7 +5,7 @@ This project uses the SDD Protocol. Read these files before starting any task:
 1. **[.sdd/workflow.md](.sdd/workflow.md)** — commands, ceremony levels, permissions, stop points, anti-patterns
 2. **[.sdd/project-overview.md](.sdd/project-overview.md)** — what this app is, its non-goals, domains, and definition of done
 3. **[.sdd/conventions.md](.sdd/conventions.md)** — project-specific conventions and patterns
-4. **[.sdd/config.json](.sdd/config.json)** — ceremony level and feature flags
+4. **[.sdd/config.json](.sdd/config.json)** — ceremony level
 
 ## Available Skills
 
@@ -35,7 +35,6 @@ Type `/skills` or `$skill-name` to invoke. Skills are defined in `.agents/skills
 | Execute approved plan one task at a time | `$spec-tasks` |
 | Stop and report an implementation gap | `$impl-gap` |
 | Document a Change Request for spec edits | `$spec-amend` |
-| Restore a spec from a snapshot | `$spec-restore` |
 | Cross-consistency analysis (goals / plan / tasks) | `$spec-analyze` |
 | Strict mechanical audit | `$verify` |
 | Lighter human-touch final pass | `$review` |

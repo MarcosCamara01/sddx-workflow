@@ -3,7 +3,7 @@ This project uses the SDD Protocol. Before starting any task, read:
 1. `.sdd/workflow.md` — all commands, ceremony levels, permissions, stop points, anti-patterns
 2. `.sdd/project-overview.md` — what this app is, its non-goals, and domains
 3. `.sdd/conventions.md` — project-specific conventions and patterns
-4. `.sdd/config.json` — ceremony level and feature flags
+4. `.sdd/config.json` — ceremony level
 
 ## Workflows
 
@@ -30,7 +30,6 @@ This project uses the SDD Protocol. Before starting any task, read:
 | `spec-tasks` | Execute plan one task at a time, TDD-first |
 | `impl-gap` | Stop and report blocking ambiguity |
 | `spec-amend` | Documented Change Request |
-| `spec-restore` | Restore spec from a snapshot |
 | `spec-analyze` | Cross-consistency analysis |
 | `verify` | Strict mechanical audit |
 | `review` | Lighter human-touch final pass |

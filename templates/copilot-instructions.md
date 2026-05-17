@@ -5,7 +5,7 @@ This project uses the SDD Protocol. Before starting any task, read:
 1. `.sdd/workflow.md` — commands, ceremony levels, permissions, stop points, anti-patterns
 2. `.sdd/project-overview.md` — what this app is, its non-goals, and domains
 3. `.sdd/conventions.md` — project-specific conventions and patterns
-4. `.sdd/config.json` — ceremony level and feature flags
+4. `.sdd/config.json` — ceremony level
 
 ## Available commands
 
@@ -34,7 +34,6 @@ Use these slash commands in Copilot Chat (type `/` to see them):
 | `/spec-tasks` | Execute plan one task at a time, TDD-first |
 | `/impl-gap` | Stop and report a blocking ambiguity |
 | `/spec-amend` | Documented Change Request for post-approval edits |
-| `/spec-restore` | Restore spec from a snapshot |
 | `/spec-analyze` | Cross-consistency analysis — writes `analysis.md` |
 | `/verify` | Strict mechanical audit — read-only |
 | `/review` | Lighter human-touch final pass |

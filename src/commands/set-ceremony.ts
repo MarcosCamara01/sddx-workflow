@@ -4,46 +4,9 @@ import { select } from '@inquirer/prompts';
 
 type Ceremony = 'solo' | 'team' | 'enterprise';
 
-interface CeremonyFeatures {
-  amendments: boolean;
-  snapshots: boolean;
-  implGaps: boolean;
-  research: boolean;
-  verify: boolean;
-  clarify: boolean;
-}
-
 interface CeremonyConfig {
   ceremony: Ceremony;
-  features: CeremonyFeatures;
 }
-
-const CEREMONY_DEFAULTS: Record<Ceremony, CeremonyFeatures> = {
-  solo: {
-    amendments: false,
-    snapshots: false,
-    implGaps: true,
-    research: true,
-    verify: false,
-    clarify: false,
-  },
-  team: {
-    amendments: true,
-    snapshots: true,
-    implGaps: true,
-    research: true,
-    verify: true,
-    clarify: false,
-  },
-  enterprise: {
-    amendments: true,
-    snapshots: true,
-    implGaps: true,
-    research: true,
-    verify: true,
-    clarify: true,
-  },
-};
 
 const CEREMONY_HEADERS: Record<Ceremony, string> = {
   solo: `> **Active ceremony level: Solo / MVP.**
@@ -56,7 +19,7 @@ const CEREMONY_HEADERS: Record<Ceremony, string> = {
 `,
   enterprise: `> **Active ceremony level: Enterprise.**
 > Required flow: \`/spec-new\` → \`/spec-clarify\` → \`/spec-plan\` → \`/spec-tasks\` → \`/verify\` → \`/review\` → \`/finish\`
-> Mandatory: \`/spec-clarify\` before \`/spec-plan\`, \`/spec-amend\` for every post-approval change, automatic snapshots before \`/spec-tasks\`.
+> Mandatory: \`/spec-clarify\` before \`/spec-plan\` and \`/spec-amend\` for every post-approval change.
 `,
 };
 
@@ -135,7 +98,7 @@ export async function setCeremonyCommand(ceremonyArg?: string): Promise<void> {
 
   console.log('');
 
-  const config: CeremonyConfig = { ceremony, features: CEREMONY_DEFAULTS[ceremony] };
+  const config: CeremonyConfig = { ceremony };
   fs.writeFileSync(configPath, JSON.stringify(config, null, 2) + '\n', 'utf8');
   console.log(`  update   .sdd/config.json (ceremony: ${ceremony})`);
 

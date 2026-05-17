@@ -118,46 +118,9 @@ const ALL_PROVIDER_IDS = Object.keys(PROVIDERS) as ProviderId[];
 
 type Ceremony = 'solo' | 'team' | 'enterprise';
 
-interface CeremonyFeatures {
-  amendments: boolean;
-  snapshots: boolean;
-  implGaps: boolean;
-  research: boolean;
-  verify: boolean;
-  clarify: boolean;
-}
-
 interface CeremonyConfig {
   ceremony: Ceremony;
-  features: CeremonyFeatures;
 }
-
-const CEREMONY_DEFAULTS: Record<Ceremony, CeremonyFeatures> = {
-  solo: {
-    amendments: false,
-    snapshots: false,
-    implGaps: true,
-    research: true,
-    verify: false,
-    clarify: false,
-  },
-  team: {
-    amendments: true,
-    snapshots: true,
-    implGaps: true,
-    research: true,
-    verify: true,
-    clarify: false,
-  },
-  enterprise: {
-    amendments: true,
-    snapshots: true,
-    implGaps: true,
-    research: true,
-    verify: true,
-    clarify: true,
-  },
-};
 
 async function selectCeremony(): Promise<Ceremony> {
   if (!process.stdout.isTTY) {
@@ -218,7 +181,7 @@ const CEREMONY_HEADERS: Record<Ceremony, string> = {
 `,
   enterprise: `> **Active ceremony level: Enterprise.**
 > Required flow: \`/spec-new\` → \`/spec-clarify\` → \`/spec-plan\` → \`/spec-tasks\` → \`/verify\` → \`/review\` → \`/finish\`
-> Mandatory: \`/spec-clarify\` before \`/spec-plan\`, \`/spec-amend\` for every post-approval change, automatic snapshots before \`/spec-tasks\`.
+> Mandatory: \`/spec-clarify\` before \`/spec-plan\` and \`/spec-amend\` for every post-approval change.
 `,
 };
 
@@ -249,7 +212,6 @@ function writeConfig(cwd: string, ceremony: Ceremony, force?: boolean): void {
   }
   const config: CeremonyConfig = {
     ceremony,
-    features: CEREMONY_DEFAULTS[ceremony],
   };
   fs.writeFileSync(dest, JSON.stringify(config, null, 2) + '\n', 'utf8');
   console.log(`  ${existed ? 'overwrite' : 'create  '}  ${dest}`);

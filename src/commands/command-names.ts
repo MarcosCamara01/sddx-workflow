@@ -11,7 +11,6 @@ export const COMMAND_NAMES = [
   'finish',
   'spec-amend',
   'impl-gap',
-  'spec-restore',
   'research',
   'verify',
   'scan',

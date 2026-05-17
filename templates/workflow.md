@@ -255,8 +255,6 @@ The plan must include:
 
 Input: approved `specs/<name>/2-plan.md`
 
-First action: invoke `sddx-workflow snapshot <name>` to capture the approved spec state in `.sdd/snapshots/<name>/<timestamp>/`. If the CLI is unavailable, warn the user that no snapshot was taken and proceed — do not abort, but make the missing safety net explicit.
-
 Rules:
 - One task at a time — complete it fully before moving to the next
 - **Before writing implementation code for each task: write the test that defines "done" first.** It must fail (red) before any implementation exists
@@ -302,7 +300,7 @@ Rules:
 - Never record implementation gaps inside `2-plan.md`; `impl-gaps.md` is the only gap log
 - The agent's proposed resolution is always non-binding — only the human decides
 - Multiple gaps per feature are normal; keep numbering monotonic
-- **Solo mode exception:** If `.sdd/config.json` sets `"amendments": false` (Solo ceremony), and the gap requires a spec change, skip the formal CR process. Instead, present the proposed change directly to the user, wait for explicit approval, then apply it and document the decision in the gap entry under a **Resolution** field. The change must still be user-approved — "no formal CR" does not mean "decide silently".
+- **Solo mode exception:** If `.sdd/config.json` sets `"ceremony": "solo"`, and the gap requires a spec change, skip the formal CR process. Instead, present the proposed change directly to the user, wait for explicit approval, then apply it and document the decision in the gap entry under a **Resolution** field. The change must still be user-approved — "no formal CR" does not mean "decide silently".
 
 ---
 
@@ -338,26 +336,6 @@ Rules:
 - One CR per logical change — do not bundle unrelated changes in a single CR
 - CR numbering is per-spec, not global (CR-001 in feature A is unrelated to CR-001 in feature B)
 - Rejected CRs stay in `amendments.md` with status "Rejected" and a one-line reason — never delete history
-
----
-
-### /spec-restore
-**Purpose:** Restore a spec folder from a snapshot.
-
-Usage: `/spec-restore <feature> [timestamp]`
-
-Use when: an amendment or implementation step has corrupted `1-requirements.md`, `2-plan.md`, or `3-tasks.md`, and reverting is faster than re-amending.
-
-Process:
-1. Read available snapshots from `.sdd/snapshots/<feature>/` — present timestamps to the user if no timestamp was supplied
-2. Confirm which snapshot to restore (timestamp argument or interactive selection) before overwriting anything
-3. Copy snapshot files over `specs/<feature>/1-requirements.md`, `2-plan.md`, `3-tasks.md`
-4. Report what was restored and what was lost (current state diff vs snapshot)
-
-Rules:
-- Snapshots are read-only by convention — never edit `.sdd/snapshots/` files
-- Restoring does NOT remove the snapshot; it can be restored again
-- If unsure which snapshot to restore, run `sddx-workflow snapshot <feature> --list` first
 
 ---
 
@@ -417,7 +395,7 @@ Process:
 3. Print a table: Feature | Phase | Progress | Outstanding (CRs, gaps)
 
 Rules:
-- This is a snapshot; no spec files are modified
+- This is a status view; no spec files are modified
 - Completed specs (moved to `_done/`) are not listed
 
 ---
@@ -522,29 +500,17 @@ Rules for the message:
 
 ---
 
-## Snapshots
-
-Snapshots capture the state of `1-requirements.md`, `2-plan.md`, and `3-tasks.md` so they can be restored later.
-
-- **When:** automatically at the start of `/spec-tasks`. Manually via `sddx-workflow snapshot <feature>`.
-- **Where:** `.sdd/snapshots/<feature>/<ISO-8601-timestamp>/`.
-- **Lifecycle:** snapshots are immutable by convention. The agent never modifies them. Restore via `/spec-restore` or by copying back manually.
-- **List existing:** `sddx-workflow snapshot <feature> --list`.
-- **Independence from git:** snapshots do not require git, do not commit anything, and do not affect history.
-
----
-
 ## Ceremony Levels
 
-The `npx sddx-workflow init` prompt asks for a ceremony level. The choice lives in `.sdd/config.json` and informs which features apply by default.
+The `npx sddx-workflow init` prompt asks for a ceremony level. The choice lives in `.sdd/config.json` and sets the recommended flow.
 
 To change the ceremony level after initialization: `sddx-workflow set-ceremony <solo|team|enterprise>` — updates `config.json` and patches the header in this file.
 
-| Edition | Use when | Required flow for features | Optional features available |
+| Edition | Use when | Required flow | Optional commands |
 |---|---|---|---|
-| **Solo / MVP** | Single developer, prototyping, exploratory work | `/spec-plan` → `/spec-tasks` → `/finish` | `/spec-status`, `/research`, snapshots |
+| **Solo / MVP** | Single developer, prototyping, exploratory work | `/spec-plan` → `/spec-tasks` → `/finish` | `/spec-status`, `/research` |
 | **Team / Product** *(default)* | Cross-functional team, real product, normal cadence | `/spec-new` → `/spec-plan` → `/spec-tasks` → `/verify` → `/review` → `/finish` | All commands; amendments encouraged on scope changes |
-| **Enterprise** | Compliance, audit trails, multi-team | All Team flow + mandatory `/spec-clarify` before `/spec-plan` + mandatory `/spec-amend` for any post-approval change + automatic snapshots before every spec-changing command |
+| **Enterprise** | Compliance, audit trails, multi-team | All Team flow + mandatory `/spec-clarify` before `/spec-plan` + mandatory `/spec-amend` for any post-approval change |
 
 | Change size | Required flow |
 |---|---|
@@ -574,7 +540,6 @@ This table formalizes what the agent may read, edit, or create in each phase. Do
 | /spec-tasks | ✓ | ✓ (only `3-tasks.md` checklist) | ✓ | Code, tests, new modules |
 | /impl-gap | ✓ | ✓ (only `impl-gaps.md`) | ✗ | Gap report only |
 | /spec-amend | ✓ | ✓ (with CR approval) | ✗ | CR record |
-| /spec-restore | ✓ | ✓ (overwrite from snapshot) | ✗ | None |
 | /verify | ✓ | ✗ | ✗ | Only `verify-report.md` |
 | /review | ✓ | ✗ | ✗ | None — notes only |
 | /spec-status, /spec-conflicts | ✓ | ✗ | ✗ | None (output is conversational) |
@@ -598,8 +563,7 @@ The agent must not:
 6. **Batch tasks.** One task at a time during `/spec-tasks` — finish, verify, then move on.
 7. **Skip `/verify` to jump straight to `/finish`.** Mechanical checks exist to catch real problems.
 8. **Make decisions about what is "good enough" structurally.** Structure is a human decision; flag it, do not absorb it.
-9. **Modify `.sdd/snapshots/` files.** They are the safety net; corrupting them defeats the purpose.
-10. **Move a spec to `_done/` before `/verify` and `/review` pass.** A spec is done when both have closed cleanly.
+9. **Move a spec to `_done/` before `/verify` and `/review` pass.** A spec is done when both have closed cleanly.
 
 ---
 
@@ -609,8 +573,7 @@ When `/verify` and `/review` have both closed cleanly for a spec:
 
 1. Move `specs/<feature>/` to `specs/_done/<feature>/`
 2. `/spec-status` no longer lists it (it excludes `_done/`)
-3. The snapshot in `.sdd/snapshots/<feature>/` is kept for audit — do not delete it
-4. Amendments (`amendments.md`) and gap records (`impl-gaps.md`) move with the spec folder
+3. Amendments (`amendments.md`) and gap records (`impl-gaps.md`) move with the spec folder
 
 The `_done/` folder is write-never during active development. Only fully shipped specs live there. Moving a spec there is a human action — the agent must not do it unilaterally.
 
