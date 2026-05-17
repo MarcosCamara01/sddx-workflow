@@ -1,6 +1,6 @@
 {
   "name": "sddx-workflow",
-  "version": "0.9.1",
+  "version": "0.10.0",
   "description": "Spec-Driven Development CLI — installs an SDD system in any project",
   "keywords": [
     "sdd",
