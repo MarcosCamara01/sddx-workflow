@@ -27,7 +27,7 @@
     "templates/"
   ],
   "scripts": {
-    "build": "tsup && chmod +x dist/cli.js",
+    "build": "tsup",
     "dev": "tsup --watch",
     "prepublishOnly": "npm run build"
   },
