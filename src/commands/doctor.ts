@@ -62,13 +62,13 @@ export function doctorCommand(): void {
 
   console.log(`  core files    ${missingCore.length === 0 ? 'ok' : `${missingCore.length} missing`}`);
   for (const missing of missingCore) {
-    warnings.push(`Missing core file: ${missing}`);
+    issues.push(`Missing core file: ${missing}`);
   }
 
   const providers = providerHealth(cwd);
   console.log(`  providers     ${providers.length > 0 ? providers.map(provider => provider.name).join(', ') : 'none detected'}`);
   if (providers.length === 0) {
-    warnings.push('No provider files detected. Run `npx sddx-workflow init --provider <id>` or `npx sddx-workflow init --all`.');
+    issues.push('No provider files detected. Run `npx sddx-workflow init --provider <id>` or `npx sddx-workflow init --all`.');
   }
   for (const provider of providers) {
     if (provider.missing.length > 0) {
