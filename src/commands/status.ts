@@ -77,7 +77,8 @@ function inferPhase(specDir: string, planApproved: boolean, tasksDone: number, t
   if (!fs.existsSync(verifyFile)) return 'awaiting /verify';
 
   const verify = fs.readFileSync(verifyFile, 'utf8');
-  return /\bFAIL\b/i.test(verify) ? 'verify failed' : 'review pending';
+  const result = verify.match(/^Result:\s*(PASS|FAIL)\s*$/m)?.[1];
+  return result === 'FAIL' ? 'verify failed' : 'review pending';
 }
 
 function readSpec(specDir: string): SpecInfo {

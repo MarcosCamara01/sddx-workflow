@@ -354,6 +354,8 @@ Checks (deterministic, listed in the report):
 
 Output: `specs/<feature>/verify-report.md` summarizing each check with pass/fail and evidence.
 
+The report's header MUST include a `Result:` line with exactly `PASS` or `FAIL` — no bold, no extra text. `sddx-workflow status` reads this line to infer the spec's phase; free-form prose elsewhere in the report is ignored.
+
 Rules:
 - This command never modifies code, spec files, or tasks — output is the report only
 - If a check fails, the report names the failure and the artifact that should resolve it

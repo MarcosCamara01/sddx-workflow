@@ -2,6 +2,9 @@
 
 Date: <YYYY-MM-DD>
 Spec: specs/<feature>/
+Result: <PASS|FAIL>
+
+<!-- Fill `Result:` with exactly `PASS` or `FAIL` (no bold, no extra text). `sddx-workflow status` reads this line. -->
 
 ---
 
@@ -40,4 +43,4 @@ Spec: specs/<feature>/
 
 ## Conclusion
 
-<!-- PASS or FAIL — one sentence. If FAIL, name each failing check and the artifact needed to resolve it. -->
+<!-- One sentence summary. If `Result: FAIL`, name each failing check and the artifact needed to resolve it. -->
