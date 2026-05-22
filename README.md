@@ -171,16 +171,21 @@ npx sddx-workflow init --all            # install every provider integration
 npx sddx-workflow init --existing       # brownfield: next steps start with /scan
 npx sddx-workflow init --force          # overwrite existing protocol files
 
-npx sddx-workflow add domain auth       # add a domain context file (.sdd/domains/auth.md)
-                                        # also: payments, storage, email
+npx sddx-workflow add domain auth       # add a built-in domain template
+                                        # built-in: auth, payments, storage, email
+                                        # for custom domains, create .sdd/domains/<name>.md manually
 
 npx sddx-workflow status                # bootstrap state + open specs progress
-npx sddx-workflow commands              # list agent commands
+npx sddx-workflow commands              # list protocol command catalog
 npx sddx-workflow update                # refresh protocol files
 npx sddx-workflow update --dry-run      # preview installed files that would change
 npx sddx-workflow update --check        # CI-friendly outdated check
 npx sddx-workflow doctor                # validate install health + stale files
 ```
+
+> **Non-TTY default:** When stdout is not a TTY (CI, piped scripts), `init`
+> without flags installs every provider - equivalent to `--all`. Pass
+> `--provider` explicitly to limit.
 
 Everything is **copied locally** — your repo owns the files, no runtime dependency,
 edit freely.
@@ -194,11 +199,11 @@ installs, because that could surprise teams that customized their local workflow
 | Need | Command |
 |---|---|
 | Refresh files you already have | `sddx-workflow update` |
-| List agent commands | `sddx-workflow commands` |
+| List protocol command catalog | `sddx-workflow commands` |
 | Preview template updates | `sddx-workflow update --dry-run` |
 | Fail CI when templates are outdated | `sddx-workflow update --check` |
 | Pull in commands added by a newer version | `sddx-workflow init --force` |
-| Add a domain file | `sddx-workflow add domain auth` |
+| Add a built-in domain template | `sddx-workflow add domain auth` |
 | Check installation health | `sddx-workflow doctor` |
 
 `update` and `init --force` never touch `project-overview.md`, `conventions.md`,

@@ -23,6 +23,7 @@ program
   .option('--existing', 'Brownfield mode: prints next-steps that start with /scan and /bootstrap --scan')
   .option('--provider <ids>', 'Comma-separated providers to install (claude-code,cursor,windsurf,copilot,codex,gemini,zed)')
   .option('--all', 'Install all provider integrations without prompting')
+  .addHelpText('after', '\nNon-TTY default:\n  When stdout is not a TTY (CI, piped scripts), init defaults to installing\n  every provider - equivalent to --all. Pass --provider to limit.\n')
   .action(initCommand);
 
 program
@@ -50,7 +51,7 @@ program
 
 program
   .command('commands')
-  .description('List agent commands installed by provider integrations')
+  .description('List the agent commands defined by the SDD protocol')
   .action(commandsCommand);
 
 program.parseAsync();

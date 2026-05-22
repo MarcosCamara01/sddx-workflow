@@ -20,7 +20,8 @@ export function addCommand(type: string, name: string): void {
   const templateSrc = DOMAIN_MAP[name];
   if (!templateSrc) {
     const available = Object.keys(DOMAIN_MAP).join(', ');
-    console.error(`  error    Unknown domain "${name}". Available: ${available}`);
+    console.error(`  error    Unknown domain "${name}". Built-in templates: ${available}.`);
+    console.error(`  hint     For other domains, create .sdd/domains/${name}.md manually.`);
     process.exit(1);
   }
 

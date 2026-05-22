@@ -15,9 +15,9 @@
 
 ## Main Domains
 
-- **Installation** — `init` (interactive provider selection or `--provider` / `--all`; `--existing` switches the next-step instructions to brownfield mode pointing at `/scan` and `/bootstrap --scan`; `--force` to overwrite), `add domain <name>` (auth, payments, storage, email). See [src/commands/init.ts](src/commands/init.ts), [src/commands/add.ts](src/commands/add.ts).
+- **Installation** — `init` (interactive provider selection or `--provider` / `--all`; non-TTY stdout defaults to all providers; `--existing` switches the next-step instructions to brownfield mode pointing at `/scan` and `/bootstrap --scan`; `--force` to overwrite), `add domain <name>` for built-in templates (auth, payments, storage, email; custom domains are created manually). See [src/commands/init.ts](src/commands/init.ts), [src/commands/add.ts](src/commands/add.ts).
 - **Maintenance** — `update` (refreshes existing files only), `doctor` (health check, detects partial installs and obsolete `spec-restore`/`snapshot` files). See [src/commands/update.ts](src/commands/update.ts), [src/commands/doctor.ts](src/commands/doctor.ts).
-- **Inspection** — `status` (bootstrap state + per-spec phase/progress), `commands` (lists installed agent commands). See [src/commands/status.ts](src/commands/status.ts), [src/commands/commands.ts](src/commands/commands.ts).
+- **Inspection** — `status` (bootstrap state + per-spec phase/progress), `commands` (lists the protocol command catalog). See [src/commands/status.ts](src/commands/status.ts), [src/commands/commands.ts](src/commands/commands.ts).
 - **Provider abstraction** — single source of truth for which files each provider gets. See [src/providers.ts](src/providers.ts) and [src/commands/command-names.ts](src/commands/command-names.ts).
 - **Template assets (the actual protocol)** — pure Markdown the CLI copies. See [templates/](templates/).
 
