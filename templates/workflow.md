@@ -122,7 +122,9 @@ Process:
 1. List every assumption, numbered, in plain language
 2. For each one: what you're assuming, why, and what would change if it's wrong
 3. ⛔ **STOP — do not proceed until every assumption is confirmed or corrected**
-4. After confirmation: update the relevant spec or plan to reflect any corrections
+4. After confirmation: confirmed assumptions land in `2-plan.md` "Assumptions".
+   If running /assume mid-/spec-tasks (after plan approval), append via
+   /spec-amend rather than editing the approved plan directly.
 
 Format:
 ```
@@ -375,10 +377,14 @@ Focus:
 - Confirm that the implementation feels like the simplest one that satisfies the requirements
 
 Rules:
-- This is a read-only, recommendation-only pass — `/review` notes issues but does not apply changes
+- This is a recommendation-only pass — `/review` notes issues but does not apply code/spec changes, except the advisory ack below
 - If `/review` finds a structural issue, escalate to `/spec-amend`
 - If `/review` finds minor follow-ups (naming, dead comment, etc.), record them as notes for the user to act on — file a separate `/bugfix` task if the user accepts them
-- `/review` never edits code or spec files directly
+- `/review` never edits code directly or any spec file beyond the advisory ack below
+- If `/review` proceeds with acknowledged warnings (rather than a green
+  /verify), append a one-line postscript to `verify-report.md` "Advisory"
+  recording the date and the warning(s) explicitly acknowledged. This is the
+  only allowed write, and keeps the audit trail intact across sessions.
 
 ---
 
@@ -412,6 +418,9 @@ Process:
 Rules:
 - Detection only — resolution is always human-decided
 - "Components Affected" is the source of truth; if a plan understates its surface, conflicts will be missed (user education, not enforcement)
+- Specs whose `3-tasks.md` is fully checked (all `[x]`) are excluded even if
+  not yet moved to `_done/` — moving is a human action and conflict detection
+  should not block on it.
 
 ---
 
@@ -530,7 +539,7 @@ This table formalizes what the agent may read, edit, or create in each phase. Do
 | /impl-gap | ✓ | ✓ (only `impl-gaps.md`) | ✗ | Gap report only |
 | /spec-amend | ✓ | ✓ (with CR approval) | ✗ | CR record |
 | /verify | ✓ | ✗ | ✗ | Only `verify-report.md` |
-| /review | ✓ | ✗ | ✗ | None — notes only |
+| /review | ✓ | ✓ (only `verify-report.md` Advisory ack) | ✗ | None — notes only |
 | /spec-status, /spec-conflicts | ✓ | ✗ | ✗ | None (output is conversational) |
 | /spec-analyze | ✓ | ✗ | ✗ | Only `analysis.md` |
 | /bugfix | ✓ | ✗ | ✓ | Tests + fix |
