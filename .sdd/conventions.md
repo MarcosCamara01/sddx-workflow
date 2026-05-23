@@ -12,7 +12,7 @@
 - **CLI parsing:** [commander](https://www.npmjs.com/package/commander) ^12
 - **Interactive prompts:** [@inquirer/prompts](https://www.npmjs.com/package/@inquirer/prompts) ^8 (`checkbox`)
 - **Package layout:** published to npm as `sddx-workflow`; `bin` field exposes `sddx-workflow` → `dist/cli.js`; `files` ships `dist/` and `templates/` only
-- **No test framework, no linter, no formatter configured yet** — this is a known gap, not a deliberate non-goal.
+- **Quality tooling:** Biome provides formatting, linting, and import organization via `npm run check`; Node's built-in `node:test` runner provides behavioral tests via `npm test`.
 
 ## File & Folder Structure
 
@@ -74,7 +74,7 @@ Non-obvious:
   - Errors go to `stderr` as `\n  error    <message>` then `process.exit(1)`.
   - Match the existing column-aligned style — don't introduce a logger or color library without surfacing it as a decision.
 - **No abstraction beyond what's already present.** The `Provider` record + `COMMAND_NAMES` array are deliberately flat data. Resist building a registry, plugin system, or rendering pipeline.
-- **Imports:** Node built-ins (`fs`, `path`, `module`) come first; local relative imports last. No path aliases.
+- **Imports:** Node built-ins use the `node:` protocol and come first; local relative imports last. No path aliases. Let Biome organize imports.
 - **Templates are dumb data.** Logic stays in `src/`. Don't put templating syntax (mustache, EJS) inside `templates/` — they are copied verbatim, byte-for-byte (`update` detects drift by string equality, see [src/commands/update.ts:11-15](src/commands/update.ts#L11-L15)).
 
 ## Patterns to Avoid
@@ -84,21 +84,25 @@ Non-obvious:
 - **Adding runtime behavior to the target project.** This tool is an installer. No "watch", "daemon", "lint", or "hook" features without an explicit architecture decision — it would break the zero-runtime invariant.
 - **Silent overwrites.** `copyTemplate` skips existing files unless `force` is passed ([src/utils.ts:22-29](src/utils.ts#L22-L29)). New code paths must preserve that contract; never use `fs.writeFileSync` to clobber user-owned files.
 - **Bundling templating engines or markdown processors.** Templates are copied as bytes. If a template needs variable substitution, surface that as a design decision first.
-- **Treating `doctor`/`status` exit codes as gospel without smoke-testing edge cases.** Prior QA bugs around `doctor` exits and `status` verify parsing have been fixed, but these commands still need explicit smoke coverage because there is no automated test suite yet.
+- **Treating `doctor`/`status` exit codes as gospel without regression coverage.** Prior QA bugs around `doctor` exits and `status` verify parsing have been fixed; new behavior must stay covered by `npm test`.
 - **Letting `dist/` or `node_modules/` leak into git.** Already gitignored ([.gitignore](.gitignore)) — keep it that way.
 
 ## Testing
 
 <!-- auto -->
-- **No automated test suite yet.** No `test` script in [package.json](package.json), no test runner installed, no CI workflow under `.github/workflows/`. This is a known gap — adding tests is an open priority and is welcome.
-- **Current verification baseline is manual**, recorded in [QA_REPORT.md](QA_REPORT.md) (2026-05-19, v0.10.0). When changing CLI behavior, that report's matrix is the closest thing to a regression checklist. Update it if the change invalidates any row.
+- **Static checks use Biome.** Run `npm run check` for formatting, linting, and import-order validation. Run `npm run format` only when intentionally applying formatter changes.
+- **Automated tests use Node's built-in `node:test` runner.** Run `npm test`; it runs `npm run check`, builds `dist/cli.js`, then executes the suite under `test/`.
+- **Current coverage:** provider parity against `COMMAND_NAMES`, entry/rule files mentioning every command, package dry-run contents, `status` phase matrix, and CLI smoke behavior for `init`, `add domain`, `update`, `doctor`, `commands`, and no-install errors.
+- **Current verification baseline is automated + manual audit**, recorded in [WORKFLOW_AUDIT_REPORT.md](WORKFLOW_AUDIT_REPORT.md) (2026-05-23, v0.10.0). When changing CLI behavior, update or add tests first, then update the audit report if the behavior matrix changes.
+- **CI:** `.github/workflows/ci.yml` runs `npm ci`, `npm run check`, `npm test`, and `npm pack --dry-run` on pushes to `main`/`master` and pull requests across Node 18, 20, and 22.
 - **Smoke procedure for a CLI-side change:**
-  1. `npm run build` — must succeed and produce `dist/cli.js` (pure tsup; no chmod step since commit `07d8a61`).
-  2. Smoke-test against a scratch directory: `mkdir /tmp/sdd-smoke && cd /tmp/sdd-smoke && node /path/to/sddx-workflow/dist/cli.js init --all`, inspect output.
-  3. Run `doctor` and `status` against the smoke install, including any affected edge case from QA_REPORT.
-  4. Re-run the affected row from QA_REPORT's verification matrix.
+  1. `npm run check` — must pass with no formatting, lint, or import-order drift.
+  2. `npm test` — must pass; it already runs `npm run check` and `npm run build`.
+  3. If changing install/update behavior, optionally smoke-test against a scratch directory: `mkdir /tmp/sdd-smoke && cd /tmp/sdd-smoke && node /path/to/sddx-workflow/dist/cli.js init --all`, inspect output.
+  4. Re-run any focused smoke script under `smoke/` that matches the touched behavior.
 - **For protocol-only changes (Markdown under `templates/`):** open the generated file in an actual agent and walk through the affected command path. Provider parity must hold across all command-aware providers.
-- **When introducing a test framework:** surface it via `/research` before adopting (Jest vs Vitest vs node:test, ESM vs CJS impact on tsup output, etc.). The current zero-test state is a gap to close, but how to close it is itself a real design decision.
+- **When introducing any additional test framework:** surface it via `/research` before adopting. The default remains `node:test` unless there is a concrete reason to add dependencies.
+- **Release checklist:** follow [RELEASE_CHECKLIST.md](RELEASE_CHECKLIST.md) before publishing.
 
 ## Domain Glossary
 
