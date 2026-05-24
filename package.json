@@ -37,7 +37,7 @@
     "prepublishOnly": "npm run check && npm run build"
   },
   "dependencies": {
-    "@inquirer/prompts": "^8.4.2",
+    "@inquirer/prompts": "^7.10.1",
     "commander": "^12.1.0"
   },
   "devDependencies": {

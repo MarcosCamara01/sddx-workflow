@@ -1,6 +1,5 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { checkbox } from '@inquirer/prompts';
 import {
   ALL_PROVIDER_IDS,
   COMMAND_PROVIDER_IDS,
@@ -18,6 +17,11 @@ interface InitOptions {
   existing?: boolean;
   provider?: string;
   all?: boolean;
+}
+
+async function loadCheckbox(): Promise<typeof import('@inquirer/prompts').checkbox> {
+  const prompts = await import('@inquirer/prompts');
+  return prompts.checkbox;
 }
 
 async function selectProviders(options: InitOptions): Promise<ProviderId[]> {
@@ -44,6 +48,7 @@ async function selectProviders(options: InitOptions): Promise<ProviderId[]> {
     return ALL_PROVIDER_IDS;
   }
 
+  const checkbox = await loadCheckbox();
   const selected = await checkbox({
     message: 'Select the AI providers to install:',
     choices: ALL_PROVIDER_IDS.map((id) => ({
