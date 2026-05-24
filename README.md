@@ -27,7 +27,7 @@ After install, the workflow happens inside your AI agent:
 /spec-tasks auth-refresh     # executes one task at a time
 /verify auth-refresh         # mechanical audit — writes verify-report.md
 /review auth-refresh         # qualitative final pass — writes review-report.md
-/finish                      # stage files + propose a commit message
+/finish                      # requires verify + review, then proposes a commit
 ```
 
 ---
@@ -75,11 +75,12 @@ npx sddx-workflow init
 
 # 3. Build a feature, using a real feature name
 /spec-new auth-refresh
+/spec-clarify auth-refresh  # resolve blockers, then mark requirements ready
 /spec-plan auth-refresh     # STOPS for your approval before any code
 /spec-tasks auth-refresh    # executes task by task
 /verify auth-refresh        # mechanical audit — writes verify-report.md
 /review auth-refresh        # qualitative final pass — writes review-report.md
-/finish                     # stage files + propose a commit message
+/finish                     # requires verify + review, then proposes a commit
 ```
 
 Existing codebase:
@@ -133,15 +134,15 @@ npx sddx-workflow init --existing
 | Command | Purpose |
 |---|---|
 | `/spec-new` | Scaffold `specs/<feature>/` from the template |
-| `/spec-clarify` | Ask blocking/non-blocking questions, record answers in requirements |
-| `/spec-plan` | Generate the technical plan — **stops for approval before any code** |
+| `/spec-clarify` | Ask blocking/non-blocking questions, record answers, and get requirements ready |
+| `/spec-plan` | Generate the technical plan from requirements marked ready — **stops for approval before any code** |
 | `/spec-tasks` | Execute the plan one atomic task at a time, test-first |
 | `/impl-gap` | Stop and log a blocking ambiguity/contradiction — no improvising |
 | `/spec-amend` | Documented Change Request to edit an already-approved spec |
 | `/spec-analyze` | Cross-consistency check: goals↔tasks, plan↔tasks, scope creep |
 | `/verify` | Strict mechanical audit — read-only `verify-report.md` |
 | `/review` | Lighter qualitative pass — writes `review-report.md` |
-| `/finish` | Stage files + draft a conventional commit message (stops to confirm) |
+| `/finish` | Requires passing verify + non-escalated review, then stages files + drafts a commit message |
 
 ### Multi-spec awareness
 | Command | Purpose |
@@ -156,9 +157,10 @@ npx sddx-workflow init --existing
 | `/refactor` | Restructure with a green-test invariant, no behavior change |
 
 **`/verify` vs `/review`:** `/verify` is the deterministic audit (tasks complete,
-goals covered, suite green, no out-of-scope edits, no open gaps/CRs). `/review` is the
-qualitative human-touch pass, recorded in `review-report.md`. Both avoid code/spec
-edits except for their report outputs.
+goals covered, suite green, no out-of-scope edits, no open gaps/CRs) and must record
+evidence for every check, not just a `Result: PASS` line. `/review` is the qualitative
+human-touch pass, recorded in `review-report.md`. Both avoid code/spec edits except
+for their report outputs.
 
 ---
 
@@ -260,6 +262,8 @@ The agent may draft plans and reports, but structural decisions stay with the hu
   `1-requirements.md` or `2-plan.md`.
 - `/verify` and `/review` are read-only, except for `verify-report.md` and
   `review-report.md`.
+- `/finish` may proceed only after `verify-report.md` is complete with `Result: PASS`
+  and `review-report.md` is non-blocking (`Result: PASS` or `Result: FOLLOW_UPS`).
 
 ---
 
@@ -269,7 +273,8 @@ Each feature lives in `specs/<name>/`. Three core files gate progress:
 
 - **`1-requirements.md`** — problem, measurable goals (G1, G2…), BDD acceptance
   criteria, constraints, blocking vs. non-blocking open questions, and a
-  Clarifications section populated by `/spec-clarify`.
+  Clarifications section populated by `/spec-clarify`. Its Status checklist must mark
+  `Ready for /spec-plan` before planning can start.
 - **`2-plan.md`** — goals coverage, assumptions confirmed via `/assume`, approach +
   tradeoffs, components affected, abort criteria. *Requires explicit approval before
   any code is written.*
@@ -277,8 +282,8 @@ Each feature lives in `specs/<name>/`. Three core files gate progress:
   (red → green), files to change, and the goal ID it serves.
 
 Once approved, `1-requirements.md` and `2-plan.md` are read-only — changes go through
-`/spec-amend`. After `/verify` and `/review` close cleanly, the spec moves to
-`specs/_done/`.
+`/spec-amend`. After `/verify` passes and `/review` is `PASS` or `FOLLOW_UPS`, the
+spec moves to `specs/_done/`.
 
 ---
 

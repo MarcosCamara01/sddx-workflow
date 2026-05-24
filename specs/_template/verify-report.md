@@ -4,7 +4,9 @@ Date: <YYYY-MM-DD>
 Spec: specs/<feature>/
 Result: <PASS|FAIL>
 
-<!-- Fill `Result:` with exactly `PASS` or `FAIL` (no bold, no extra text). `sddx-workflow status` reads this line. -->
+<!-- Fill `Result:` with exactly `PASS` or `FAIL` (no bold, no extra text).
+     `sddx-workflow status` reads this line, and `gate finish` also requires
+     every check row below to have PASS/FAIL status plus concrete evidence. -->
 
 ---
 
@@ -19,6 +21,9 @@ Result: <PASS|FAIL>
 | 5 | No files modified outside "Components Affected" in `2-plan.md` | | |
 | 6 | No unresolved `/impl-gap` entries | | |
 | 7 | No CRs in "Pending approval" status | | |
+
+<!-- Replace every blank Status cell with PASS or FAIL, and every blank Evidence
+     cell with the concrete command, file, test, or artifact that proves it. -->
 
 ---
 

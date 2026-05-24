@@ -5,7 +5,10 @@ import {
   countUnresolvedGaps,
   hasApprovedPlanMarker,
   hasBlockingClarifications,
+  hasRequirementsReadyMarker,
+  hasSubstantiveVerifyReport,
   readIfExists,
+  readReviewResult,
   readVerifyResult,
   taskProgress,
 } from '../spec-state';
@@ -33,6 +36,18 @@ function addCommonBlockers(specDir: string, feature: string, blockers: Blocker[]
     blockers.push({
       message: 'there is at least one unchecked blocking clarification',
       next: `Run \`/spec-clarify ${feature}\` and record the answer before continuing.`,
+    });
+  }
+}
+
+function addRequirementsReadyBlockers(specDir: string, feature: string, blockers: Blocker[]): void {
+  const requirements = readIfExists(path.join(specDir, '1-requirements.md'));
+  if (!requirements) return;
+
+  if (!hasRequirementsReadyMarker(requirements)) {
+    blockers.push({
+      message: 'requirements are not ready for /spec-plan',
+      next: `Check \`- [x] Ready for /spec-plan\` in specs/${feature}/1-requirements.md after open questions and scenarios are complete.`,
     });
   }
 }
@@ -118,6 +133,37 @@ function addVerifyBlockers(specDir: string, feature: string, blockers: Blocker[]
       message: 'verify report is failing',
       next: `Resolve the failed checks in specs/${feature}/verify-report.md before continuing.`,
     });
+  } else if (!hasSubstantiveVerifyReport(content)) {
+    blockers.push({
+      message:
+        'verify report is incomplete: required checks, evidence, or detail sections are missing',
+      next: `Regenerate specs/${feature}/verify-report.md with \`/verify ${feature}\`.`,
+    });
+  }
+}
+
+function addReviewBlockers(specDir: string, feature: string, blockers: Blocker[]): void {
+  const content = readIfExists(path.join(specDir, 'review-report.md'));
+  if (!content) {
+    blockers.push({
+      message: 'review report is missing: specs/<feature>/review-report.md was not found',
+      next: `Run \`/review ${feature}\` before continuing.`,
+    });
+    return;
+  }
+
+  const result = readReviewResult(content);
+  if (result === 'MALFORMED') {
+    blockers.push({
+      message:
+        'review report is malformed: missing exact `Result: PASS`, `Result: FOLLOW_UPS`, or `Result: ESCALATED` line',
+      next: `Regenerate specs/${feature}/review-report.md with \`/review ${feature}\`.`,
+    });
+  } else if (result === 'ESCALATED') {
+    blockers.push({
+      message: 'review report is escalated',
+      next: `Resolve the escalation in specs/${feature}/review-report.md before continuing.`,
+    });
   }
 }
 
@@ -163,12 +209,16 @@ export function gateCommand(phase: string, feature: string): void {
     });
   } else {
     addCommonBlockers(specDir, feature, blockers);
+    if (gatePhase === 'spec-plan') addRequirementsReadyBlockers(specDir, feature, blockers);
     if (gatePhase !== 'spec-plan') addPlanBlockers(specDir, feature, blockers);
     if (gatePhase !== 'spec-plan') addOpenChangeBlockers(specDir, feature, blockers);
     if (gatePhase === 'verify' || gatePhase === 'finish') {
       addTaskBlockers(specDir, feature, blockers);
     }
-    if (gatePhase === 'finish') addVerifyBlockers(specDir, feature, blockers);
+    if (gatePhase === 'finish') {
+      addVerifyBlockers(specDir, feature, blockers);
+      addReviewBlockers(specDir, feature, blockers);
+    }
   }
 
   if (blockers.length > 0) {

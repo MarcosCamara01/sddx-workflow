@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 export type VerifyResult = 'PASS' | 'FAIL' | 'MALFORMED';
+export type ReviewResult = 'PASS' | 'FOLLOW_UPS' | 'ESCALATED' | 'MALFORMED';
 
 export interface TaskProgress {
   done: number;
@@ -20,6 +21,10 @@ export function hasBlockingClarifications(content: string): boolean {
   return /^\s*- \[ \]\s*\u26d4\ufe0f?\s*BLOCKING\b/imu.test(stripComments(content));
 }
 
+export function hasRequirementsReadyMarker(content: string): boolean {
+  return /^- \[x\]\s+Ready for \/spec-plan\b/im.test(stripComments(content));
+}
+
 export function hasApprovedPlanMarker(content: string): boolean {
   return /^- \[x\]\s+\*\*Approved\*\*/im.test(stripComments(content));
 }
@@ -32,6 +37,46 @@ export function hasPlanApprovedLine(content: string): boolean {
 export function readVerifyResult(content: string): VerifyResult {
   const result = content.match(/^Result:\s*(PASS|FAIL)\s*$/m)?.[1];
   return result === 'PASS' || result === 'FAIL' ? result : 'MALFORMED';
+}
+
+export function hasSubstantiveVerifyReport(content: string): boolean {
+  const stripped = stripComments(content);
+  const requiredHeadings = [
+    /^## Checks\s*$/im,
+    /^## Detail\s*$/im,
+    /^### Tasks\s*$/im,
+    /^### Goals\s*$/im,
+    /^### Scenarios\s*$/im,
+    /^### Scope\s*$/im,
+    /^### Gaps and CRs\s*$/im,
+    /^## Conclusion\s*$/im,
+  ];
+
+  if (!requiredHeadings.every((heading) => heading.test(stripped))) {
+    return false;
+  }
+
+  const checkRows = stripped.match(/^\|\s*[1-7]\s*\|[^|\n]+\|[^|\n]*\|[^|\n]*\|\s*$/gim) ?? [];
+  if (checkRows.length < 7) {
+    return false;
+  }
+
+  return checkRows.every((row) => {
+    const cells = row
+      .split('|')
+      .slice(1, -1)
+      .map((cell) => cell.trim());
+    const status = cells[2];
+    const evidence = cells[3];
+    return /^(PASS|FAIL)$/i.test(status) && evidence.length > 0;
+  });
+}
+
+export function readReviewResult(content: string): ReviewResult {
+  const result = content.match(/^Result:\s*(PASS|FOLLOW_UPS|ESCALATED)\s*$/m)?.[1];
+  return result === 'PASS' || result === 'FOLLOW_UPS' || result === 'ESCALATED'
+    ? result
+    : 'MALFORMED';
 }
 
 export function taskProgress(content: string): TaskProgress {

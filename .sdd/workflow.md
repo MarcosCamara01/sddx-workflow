@@ -191,7 +191,8 @@ Process:
 4. Copy `specs/_template/3-tasks.md` → `specs/<name>/3-tasks.md`
 5. Replace `<Feature Name>` in each file title with the actual feature name
 
-Then: fill out `1-requirements.md` before running /spec-clarify or /spec-plan.
+Then: fill out `1-requirements.md`, resolve blocking questions, and check
+`- [x] Ready for /spec-plan` before running /spec-plan.
 
 ---
 
@@ -219,17 +220,18 @@ Rules:
 ### /spec-plan
 **Purpose:** Generate a technical plan from an approved requirements doc.
 
-Input: completed `specs/<name>/1-requirements.md`
+Input: ready `specs/<name>/1-requirements.md`
 
 Process:
 1. Read requirements and acceptance criteria
-2. Check Clarifications section — if any `[ ] ⛔ BLOCKING` entry (unchecked blocking question) exists, STOP and run /spec-clarify
-3. Run /assume — list every assumption about requirements, codebase state, and technical decisions; STOP and wait for confirmation before continuing
-4. Consider the simplest approach that satisfies the requirements; if you reject it, explain why
-5. Analyze codebase impact
-6. Define abort criteria: conditions under which tasks must stop and return to planning
-7. Draft technical plan in `specs/<name>/2-plan.md`
-8. **Optionally**, when context warrants, emit additional artifacts alongside `2-plan.md`:
+2. Check Status — if `- [x] Ready for /spec-plan` is not checked, STOP and finish requirements first
+3. Check Clarifications section — if any `[ ] ⛔ BLOCKING` entry (unchecked blocking question) exists, STOP and run /spec-clarify
+4. Run /assume — list every assumption about requirements, codebase state, and technical decisions; STOP and wait for confirmation before continuing
+5. Consider the simplest approach that satisfies the requirements; if you reject it, explain why
+6. Analyze codebase impact
+7. Define abort criteria: conditions under which tasks must stop and return to planning
+8. Draft technical plan in `specs/<name>/2-plan.md`
+9. **Optionally**, when context warrants, emit additional artifacts alongside `2-plan.md`:
    - `2a-data-model.md` — only if persistence is non-trivial (new tables, schemas, migrations)
    - `2b-api-contracts.md` — only if new external HTTP/RPC/event contracts are introduced
    - `2c-research.md` — only if outstanding research material from `/research` belongs in the plan
@@ -354,9 +356,11 @@ Checks (deterministic, listed in the report):
 - No outstanding `/impl-gap` entries marked unresolved
 - No outstanding `/spec-amend` CRs in "Pending approval" status
 
-Output: `specs/<feature>/verify-report.md` summarizing each check with pass/fail and evidence.
+Output: `specs/<feature>/verify-report.md` with all seven check rows populated with
+PASS/FAIL status and concrete evidence. The Detail sections must be filled in; a
+bare `Result: PASS` line is not a valid verify report.
 
-The report's header MUST include a `Result:` line with exactly `PASS` or `FAIL` — no bold, no extra text. `sddx-workflow status` reads this line to infer the spec's phase; free-form prose elsewhere in the report is ignored.
+The report's header MUST include a `Result:` line with exactly `PASS` or `FAIL` — no bold, no extra text. This line is necessary but not sufficient: `sddx-workflow gate finish` also requires the expected checks, evidence, and detail sections.
 
 Rules:
 - This command never modifies code, spec files, or tasks — output is the report only
@@ -466,11 +470,13 @@ Rules:
 **Purpose:** Stage changed files and produce a conventional commit message for approval.
 
 Process:
-1. Run `git status` — identify changed, added, and deleted files
-2. Run `git diff` (staged and unstaged) — read the actual changes in detail
-3. Exclude files that must not be committed: `.env*`, build artifacts, scratch files, editor state
-4. Stage all relevant files with `git add`
-5. Determine the commit type from the changes:
+1. Confirm `verify-report.md` is complete and `Result: PASS`
+2. Confirm `review-report.md` exists and has `Result: PASS` or `Result: FOLLOW_UPS`; `Result: ESCALATED` blocks finish
+3. Run `git status` — identify changed, added, and deleted files
+4. Run `git diff` (staged and unstaged) — read the actual changes in detail
+5. Exclude files that must not be committed: `.env*`, build artifacts, scratch files, editor state
+6. Stage all relevant files with `git add`
+7. Determine the commit type from the changes:
    - `feat` — new feature or user-visible capability
    - `fix` — bug fix
    - `refactor` — restructuring without behavior change
@@ -479,7 +485,7 @@ Process:
    - `chore` — build, tooling, dependencies, config
    - `style` — formatting, no logic change
    - `perf` — performance improvement
-6. Draft commit message following the format below
+8. Draft commit message following the format below
 
 ⛔ **STOP. Present the staged file list and the proposed commit message. Do not commit until explicitly approved.**
 
@@ -562,7 +568,7 @@ The agent must not:
 4. **Refactor adjacent code during a task.** Note it for later; do not change scope.
 5. **Add a dependency without surfacing it in `/research` or `/assume`.** Surprise dependencies are scope creep.
 6. **Batch tasks.** One task at a time during `/spec-tasks` — finish, verify, then move on.
-7. **Skip `/verify` to jump straight to `/finish`.** Mechanical checks exist to catch real problems.
+7. **Skip `/verify` or `/review` to jump straight to `/finish`.** Mechanical and qualitative checks exist to catch real problems.
 8. **Make decisions about what is "good enough" structurally.** Structure is a human decision; flag it, do not absorb it.
 9. **Move a spec to `_done/` before `/verify` and `/review` pass.** A spec is done when both have closed cleanly.
 
@@ -570,7 +576,9 @@ The agent must not:
 
 ## Closing a Spec
 
-When `/verify` and `/review` have both closed cleanly for a spec:
+When `/verify` and `/review` have both closed cleanly for a spec (`verify-report.md`
+has `Result: PASS`, and `review-report.md` has `Result: PASS` or
+`Result: FOLLOW_UPS`):
 
 1. Move `specs/<feature>/` to `specs/_done/<feature>/`
 2. `/spec-status` no longer lists it (it excludes `_done/`)
@@ -582,7 +590,7 @@ The `_done/` folder is write-never during active development. Only fully shipped
 
 ## Stop Points (Non-Negotiable)
 
-1. **Unclear requirements** — stop, ask via /ask or run /spec-clarify, do not assume
+1. **Unclear or not-ready requirements** — stop, ask via /ask or run /spec-clarify, do not assume; /spec-plan requires `- [x] Ready for /spec-plan`
 2. **Unvalidated assumptions** — run /assume before /spec-plan; if a confirmed assumption turns out false mid-execution, stop and re-plan
 3. **After /spec-plan** — never proceed to tasks without explicit approval
 4. **Abort criterion triggered** — when any condition in the plan's Abort Criteria is met, stop immediately and return to /spec-plan
