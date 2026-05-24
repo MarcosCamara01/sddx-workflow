@@ -2,7 +2,7 @@ const { test } = require('node:test');
 const { assert, expectCliFail, expectCliOk, makeTempDir, mkdir, writeFile } = require('./helpers');
 
 function createSddProject() {
-  const root = makeTempDir('sddx-gate-');
+  const root = makeTempDir('sddguard-gate-');
   mkdir(root, '.sdd');
   mkdir(root, 'specs/_template');
   writeFile(root, '.sdd/workflow.md', '# SDD Protocol\n');
@@ -86,7 +86,7 @@ Result: ${result}
 }
 
 test('gate fails outside an SDD installation', () => {
-  const root = makeTempDir('sddx-gate-missing-');
+  const root = makeTempDir('sddguard-gate-missing-');
   const result = expectCliFail(['gate', 'spec-plan', 'demo'], { cwd: root });
 
   assert.match(result.output, /No SDD installation found/);

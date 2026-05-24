@@ -9,7 +9,7 @@
 - Bundler: `tsup`, outputting `dist/cli.js` with a `#!/usr/bin/env node` banner.
 - Quality tooling: Biome for check, format, and lint.
 - Tests: Node's built-in `node:test` runner plus `node:assert/strict`.
-- Package surface: npm package `sddx-workflow`; published files are limited to `dist/`, `templates/`, README, package metadata, and npm defaults.
+- Package surface: npm package `sddguard`; published files are limited to `dist/`, `templates/`, README, package metadata, and npm defaults.
 
 ## File & Folder Structure
 

@@ -71,9 +71,9 @@ test('entry and rule files mention every protocol command', () => {
     'templates/CLAUDE.md',
     'templates/gemini.md',
     'templates/copilot-instructions.md',
-    'templates/cursor-rules/sddx-workflow.mdc',
-    'templates/windsurf-rules/sddx-workflow.md',
-    'templates/zed-rules/sddx-workflow.md',
+    'templates/cursor-rules/sddguard.mdc',
+    'templates/windsurf-rules/sddguard.md',
+    'templates/zed-rules/sddguard.md',
   ];
 
   for (const file of entryFiles) {

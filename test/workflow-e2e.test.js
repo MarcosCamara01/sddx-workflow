@@ -9,7 +9,7 @@ const {
 } = require('./helpers');
 
 function createMiniProject() {
-  const root = makeTempDir('sddx-workflow-e2e-');
+  const root = makeTempDir('sddguard-e2e-');
 
   writeFile(
     root,

@@ -2,7 +2,7 @@
 set -euo pipefail
 
 repo_root=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
-tmp=$(mktemp -d /tmp/sddx-f001-smoke-XXXXXX)
+tmp=$(mktemp -d /tmp/sddguard-f001-smoke-XXXXXX)
 
 cleanup() {
   rm -rf "$tmp"

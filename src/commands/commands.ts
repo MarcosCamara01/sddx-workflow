@@ -23,7 +23,7 @@ function showInstalledCommands(): void {
   if (!exists(cwd, '.sdd')) {
     console.error('\n  error    No SDD installation found in this directory.');
     console.error(
-      '  next     Run `npx sddx-workflow init` or cd into a project that already has .sdd/.\n',
+      '  next     Run `npx sddguard init` or cd into a project that already has .sdd/.\n',
     );
     process.exit(1);
   }
@@ -60,7 +60,7 @@ function showInstalledCommands(): void {
   if (detectedProviders === 0) {
     console.error('  error       No command-aware provider files detected.');
     console.error(
-      '  next        Run `npx sddx-workflow init --provider <id>` with claude-code, codex, copilot, gemini, or windsurf.\n',
+      '  next        Run `npx sddguard init --provider <id>` with claude-code, codex, copilot, gemini, or windsurf.\n',
     );
     process.exit(1);
   }

@@ -5,7 +5,7 @@ Spec: specs/<feature>/
 Result: <PASS|FAIL>
 
 <!-- Fill `Result:` with exactly `PASS` or `FAIL` (no bold, no extra text).
-     `sddx-workflow status` reads this line, and `gate finish` also requires
+     `sddguard status` reads this line, and `gate finish` also requires
      every check row below to have PASS/FAIL status plus concrete evidence. -->
 
 ---

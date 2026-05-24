@@ -54,7 +54,7 @@ export function doctorCommand(): void {
   console.log(`  install       ${hasSdd ? 'found' : 'missing'}`);
   if (!hasSdd) {
     console.log('');
-    console.log('  error        No .sdd/ directory found. Run `npx sddx-workflow init`.');
+    console.log('  error        No .sdd/ directory found. Run `npx sddguard init`.');
     console.log('');
     process.exit(1);
   }
@@ -74,13 +74,13 @@ export function doctorCommand(): void {
   );
   if (providers.length === 0) {
     issues.push(
-      'No provider files detected. Run `npx sddx-workflow init --provider <id>` or `npx sddx-workflow init --all`.',
+      'No provider files detected. Run `npx sddguard init --provider <id>` or `npx sddguard init --all`.',
     );
   }
   for (const provider of providers) {
     if (provider.missing.length > 0) {
       issues.push(
-        `${provider.name} appears partially installed (${provider.missing.length} missing file${provider.missing.length === 1 ? '' : 's'}). Run \`npx sddx-workflow init --force --provider ${provider.id}\` to reinstall it.`,
+        `${provider.name} appears partially installed (${provider.missing.length} missing file${provider.missing.length === 1 ? '' : 's'}). Run \`npx sddguard init --force --provider ${provider.id}\` to reinstall it.`,
       );
     }
   }
@@ -98,8 +98,8 @@ export function doctorCommand(): void {
       .trim();
     if (!firstLine.startsWith(WORKFLOW_MARKER)) {
       warnings.push(
-        `${WORKFLOW_PATH} does not look like an sddx-workflow file (header: "${firstLine.slice(0, 60)}"). ` +
-          'Was it from a different tool? Run `npx sddx-workflow init --force` to replace it.',
+        `${WORKFLOW_PATH} does not look like an sddguard file (header: "${firstLine.slice(0, 60)}"). ` +
+          'Was it from a different tool? Run `npx sddguard init --force` to replace it.',
       );
     }
   }

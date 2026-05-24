@@ -7,7 +7,7 @@ const { spawnSync } = require('node:child_process');
 const repoRoot = path.resolve(__dirname, '..');
 const cliPath = path.join(repoRoot, 'dist', 'cli.js');
 
-function makeTempDir(prefix = 'sddx-test-') {
+function makeTempDir(prefix = 'sddguard-test-') {
   return fs.mkdtempSync(path.join(os.tmpdir(), prefix));
 }
 

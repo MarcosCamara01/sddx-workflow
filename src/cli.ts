@@ -12,7 +12,7 @@ const pkg = createRequire(__filename)('../package.json') as { version: string };
 
 const program = new Command();
 
-program.name('sddx-workflow').description('Spec-Driven Development CLI').version(pkg.version);
+program.name('sddguard').description('Spec-Driven Development CLI').version(pkg.version);
 
 program
   .command('init')
@@ -38,7 +38,7 @@ program
   .description('Add an SDD component to an existing installation')
   .addHelpText(
     'after',
-    '\nExamples:\n  $ sddx-workflow add domain auth\n  $ sddx-workflow add domain payments',
+    '\nExamples:\n  $ sddguard add domain auth\n  $ sddguard add domain payments',
   )
   .action(addCommand);
 
@@ -54,7 +54,7 @@ program
   .description('Check whether an SDD workflow phase may proceed')
   .addHelpText(
     'after',
-    '\nExamples:\n  $ sddx-workflow gate spec-tasks auth-refresh\n  $ sddx-workflow gate finish auth-refresh',
+    '\nExamples:\n  $ sddguard gate spec-tasks auth-refresh\n  $ sddguard gate finish auth-refresh',
   )
   .action(gateCommand);
 

@@ -2,7 +2,7 @@
 set -eu
 
 CLI="${1:-$(pwd)/dist/cli.js}"
-ROOT="$(mktemp -d /tmp/sddx-f002-status-XXXXXX)"
+ROOT="$(mktemp -d /tmp/sddguard-f002-status-XXXXXX)"
 trap 'rm -rf "$ROOT"' EXIT
 
 make_fixture() {

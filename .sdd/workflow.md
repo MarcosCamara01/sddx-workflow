@@ -360,7 +360,7 @@ Output: `specs/<feature>/verify-report.md` with all seven check rows populated w
 PASS/FAIL status and concrete evidence. The Detail sections must be filled in; a
 bare `Result: PASS` line is not a valid verify report.
 
-The report's header MUST include a `Result:` line with exactly `PASS` or `FAIL` — no bold, no extra text. This line is necessary but not sufficient: `sddx-workflow gate finish` also requires the expected checks, evidence, and detail sections.
+The report's header MUST include a `Result:` line with exactly `PASS` or `FAIL` — no bold, no extra text. This line is necessary but not sufficient: `sddguard gate finish` also requires the expected checks, evidence, and detail sections.
 
 Rules:
 - This command never modifies code, spec files, or tasks — output is the report only

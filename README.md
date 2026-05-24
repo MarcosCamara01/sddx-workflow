@@ -1,19 +1,19 @@
-# sddx-workflow
+# sddguard
 
-[![npm](https://img.shields.io/npm/v/sddx-workflow)](https://www.npmjs.com/package/sddx-workflow)
-[![node](https://img.shields.io/node/v/sddx-workflow)](https://nodejs.org)
-[![license](https://img.shields.io/npm/l/sddx-workflow)](LICENSE)
+[![npm](https://img.shields.io/npm/v/sddguard)](https://www.npmjs.com/package/sddguard)
+[![node](https://img.shields.io/node/v/sddguard)](https://nodejs.org)
+[![license](https://img.shields.io/npm/l/sddguard)](LICENSE)
 
 Spec-Driven Development for AI-assisted projects.
 
-`sddx-workflow` installs a local protocol that guides AI agents through
+`sddguard` installs a local protocol that guides AI agents through
 **clarify → plan → execute → verify → review**, stopping at explicit gates where a
 human approves before the agent continues. The CLI is intentionally small: it copies
 Markdown command definitions into your repo, then you work inside your agent chat with
 commands like `/spec-plan`, `/spec-tasks`, `/verify`, and `/finish`.
 
 ```bash
-npx sddx-workflow init
+npx sddguard init
 ```
 
 Works with any stack (Next.js, Python, Go, Rails, …) and ships provider templates for
@@ -34,13 +34,13 @@ After install, the workflow happens inside your AI agent:
 
 ## Mental model
 
-There is no daemon, server, database, or task runner. `sddx-workflow` is an
+There is no daemon, server, database, or task runner. `sddguard` is an
 **installer** for plain-Markdown protocol files your repo owns and you can edit.
 
 Two command surfaces:
 
 - **CLI commands** run in your terminal — install, status, updates:
-  `npx sddx-workflow init`, `sddx-workflow status`, `sddx-workflow update`.
+  `npx sddguard init`, `sddguard status`, `sddguard update`.
 - **Agent commands** run inside your AI tool — the actual workflow:
   `/spec-plan`, `/spec-tasks`, `/verify`, `/finish`.
 
@@ -68,7 +68,7 @@ New project:
 
 ```bash
 # 1. Install the protocol (prompts for which agents to set up)
-npx sddx-workflow init
+npx sddguard init
 
 # 2. Populate project context — run inside your AI agent
 /bootstrap
@@ -86,7 +86,7 @@ npx sddx-workflow init
 Existing codebase:
 
 ```bash
-npx sddx-workflow init --existing
+npx sddguard init --existing
 
 # Then have the agent discover the code before writing context files:
 /scan                       # discovery only — writes scan-report.md
@@ -167,23 +167,23 @@ for their report outputs.
 ## CLI reference
 
 ```bash
-npx sddx-workflow init                  # install protocol (prompts for agents)
-npx sddx-workflow init --provider codex # install only one provider integration
-npx sddx-workflow init --provider codex,gemini
-npx sddx-workflow init --all            # install every provider integration
-npx sddx-workflow init --existing       # brownfield: next steps start with /scan
-npx sddx-workflow init --force          # refresh protocol files, preserving project context
+npx sddguard init                  # install protocol (prompts for agents)
+npx sddguard init --provider codex # install only one provider integration
+npx sddguard init --provider codex,gemini
+npx sddguard init --all            # install every provider integration
+npx sddguard init --existing       # brownfield: next steps start with /scan
+npx sddguard init --force          # refresh protocol files, preserving project context
 
-npx sddx-workflow add domain auth       # add a built-in domain template
+npx sddguard add domain auth       # add a built-in domain template
                                         # built-in: auth, payments, storage, email
                                         # for custom domains, create .sdd/domains/<name>.md manually
 
-npx sddx-workflow status                # bootstrap state + open specs progress
-npx sddx-workflow commands              # list protocol command catalog
-npx sddx-workflow update                # refresh protocol files
-npx sddx-workflow update --dry-run      # preview installed files that would change
-npx sddx-workflow update --check        # CI-friendly outdated check
-npx sddx-workflow doctor                # validate install health + stale files
+npx sddguard status                # bootstrap state + open specs progress
+npx sddguard commands              # list protocol command catalog
+npx sddguard update                # refresh protocol files
+npx sddguard update --dry-run      # preview installed files that would change
+npx sddguard update --check        # CI-friendly outdated check
+npx sddguard doctor                # validate install health + stale files
 ```
 
 > **Non-TTY default:** When stdout is not a TTY (CI, piped scripts), `init`
@@ -195,20 +195,20 @@ edit freely.
 
 ## Updating an existing install
 
-`sddx-workflow update` refreshes managed workflow and command files that
+`sddguard update` refreshes managed workflow and command files that
 **already exist** in your project. It preserves project context and provider
 entrypoints/rules, and it does not silently create newly introduced provider
 commands in older installs.
 
 | Need | Command |
 |---|---|
-| Refresh managed files you already have | `sddx-workflow update` |
-| List protocol command catalog | `sddx-workflow commands` |
-| Preview template updates | `sddx-workflow update --dry-run` |
-| Fail CI when templates are outdated | `sddx-workflow update --check` |
-| Pull in commands added by a newer version | `sddx-workflow init --force` |
-| Add a built-in domain template | `sddx-workflow add domain auth` |
-| Check installation health | `sddx-workflow doctor` |
+| Refresh managed files you already have | `sddguard update` |
+| List protocol command catalog | `sddguard commands` |
+| Preview template updates | `sddguard update --dry-run` |
+| Fail CI when templates are outdated | `sddguard update --check` |
+| Pull in commands added by a newer version | `sddguard init --force` |
+| Add a built-in domain template | `sddguard add domain auth` |
+| Check installation health | `sddguard doctor` |
 
 `update` and `init --force` never touch `project-overview.md`, `conventions.md`,
 `domains/`, or provider entrypoints/rules such as `AGENTS.md`, `CLAUDE.md`,
@@ -295,8 +295,8 @@ spec moves to `specs/_done/`.
 | OpenAI Codex | `.agents/skills/*/SKILL.md`, `AGENTS.md` |
 | GitHub Copilot | `.github/prompts/*.prompt.md`, `.github/copilot-instructions.md` |
 | Gemini CLI | `.gemini/commands/*.toml`, `GEMINI.md` |
-| Windsurf | `.windsurf/workflows/*.md`, `.windsurf/rules/sddx-workflow.md` |
-| Cursor | `.cursor/rules/sddx-workflow.mdc` |
+| Windsurf | `.windsurf/workflows/*.md`, `.windsurf/rules/sddguard.md` |
+| Cursor | `.cursor/rules/sddguard.mdc` |
 | Zed | `.rules` |
 
 Providers with native slash-command or workflow support get per-command files.
@@ -329,8 +329,8 @@ Enforced by every command:
 ## Development
 
 ```bash
-git clone https://github.com/MarcosCamara01/sddx-workflow.git
-cd sddx-workflow
+git clone https://github.com/MarcosCamara01/sddguard.git
+cd sddguard
 npm install
 npm run dev      # watch mode
 npm run build    # production build → dist/cli.js
@@ -344,7 +344,7 @@ npm version minor   # new feature: 0.1.0 → 0.2.0
 npm publish
 ```
 
-Users running `npx sddx-workflow init` always get the latest version.
+Users running `npx sddguard init` always get the latest version.
 
 ---
 

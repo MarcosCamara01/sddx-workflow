@@ -192,7 +192,7 @@ export function gateCommand(phase: string, feature: string): void {
     console.error('');
     console.error('  error    No SDD installation found in this directory.');
     console.error(
-      '  next     Run `npx sddx-workflow init` or cd into a project that already has .sdd/.',
+      '  next     Run `npx sddguard init` or cd into a project that already has .sdd/.',
     );
     console.error('');
     process.exit(1);

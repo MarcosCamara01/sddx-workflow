@@ -44,8 +44,8 @@ export const USER_OWNED_PROVIDER_FILES = new Set([
   'CLAUDE.md',
   'GEMINI.md',
   '.github/copilot-instructions.md',
-  '.cursor/rules/sddx-workflow.mdc',
-  '.windsurf/rules/sddx-workflow.md',
+  '.cursor/rules/sddguard.mdc',
+  '.windsurf/rules/sddguard.md',
   '.rules',
 ]);
 
@@ -84,13 +84,13 @@ export const PROVIDERS: Record<ProviderId, Provider> = {
   cursor: {
     name: 'Cursor',
     dirs: ['.cursor/rules'],
-    files: [{ src: 'cursor-rules/sddx-workflow.mdc', dest: '.cursor/rules/sddx-workflow.mdc' }],
+    files: [{ src: 'cursor-rules/sddguard.mdc', dest: '.cursor/rules/sddguard.mdc' }],
   },
   windsurf: {
     name: 'Windsurf',
     dirs: ['.windsurf/rules', '.windsurf/workflows'],
     files: [
-      { src: 'windsurf-rules/sddx-workflow.md', dest: '.windsurf/rules/sddx-workflow.md' },
+      { src: 'windsurf-rules/sddguard.md', dest: '.windsurf/rules/sddguard.md' },
       ...windsurfWorkflowFiles,
     ],
   },
@@ -115,7 +115,7 @@ export const PROVIDERS: Record<ProviderId, Provider> = {
   zed: {
     name: 'Zed',
     dirs: [],
-    files: [{ src: 'zed-rules/sddx-workflow.md', dest: '.rules' }],
+    files: [{ src: 'zed-rules/sddguard.md', dest: '.rules' }],
   },
 };
 

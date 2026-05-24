@@ -1,5 +1,5 @@
 {
-  "name": "sddx-workflow",
+  "name": "sddguard",
   "version": "0.11.0",
   "description": "Spec-Driven Development CLI — installs an SDD system in any project",
   "keywords": [
@@ -13,14 +13,14 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/MarcosCamara01/sddx-workflow.git"
+    "url": "https://github.com/MarcosCamara01/sddguard.git"
   },
-  "homepage": "https://github.com/MarcosCamara01/sddx-workflow#readme",
+  "homepage": "https://github.com/MarcosCamara01/sddguard#readme",
   "bugs": {
-    "url": "https://github.com/MarcosCamara01/sddx-workflow/issues"
+    "url": "https://github.com/MarcosCamara01/sddguard/issues"
   },
   "bin": {
-    "sddx-workflow": "dist/cli.js"
+    "sddguard": "dist/cli.js"
   },
   "files": [
     "dist/",

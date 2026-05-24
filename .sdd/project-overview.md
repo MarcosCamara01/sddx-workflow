@@ -2,7 +2,7 @@
 
 ## What This App Does
 
-`sddx-workflow` is a small Node.js CLI that installs a Spec-Driven Development protocol into a target project. The product is the local Markdown workflow it copies: `.sdd/` context files, `specs/_template/` templates, and provider-specific agent instructions for Claude Code, OpenAI Codex, GitHub Copilot, Gemini CLI, Windsurf, Cursor, and Zed.
+`sddguard` is a small Node.js CLI that installs a Spec-Driven Development protocol into a target project. The product is the local Markdown workflow it copies: `.sdd/` context files, `specs/_template/` templates, and provider-specific agent instructions for Claude Code, OpenAI Codex, GitHub Copilot, Gemini CLI, Windsurf, Cursor, and Zed.
 
 The CLI helps teams guide AI-assisted development through clarify, plan, execute, verify, review, and finish phases with explicit human stop points. It also provides executable checks such as `gate`, `status --strict`, `commands --installed`, and `doctor` so CI or an obedient agent can catch common protocol blockers.
 

@@ -10,7 +10,7 @@ const {
 } = require('./helpers');
 
 function createSddProject(options = {}) {
-  const root = makeTempDir('sddx-status-');
+  const root = makeTempDir('sddguard-status-');
   mkdir(root, '.sdd');
   mkdir(root, 'specs/_template');
   writeFile(root, '.sdd/workflow.md', '# SDD Protocol\n');
@@ -56,7 +56,7 @@ function assertStatusLine(output, specName, expected) {
 }
 
 test('status fails outside an SDD installation', () => {
-  const root = makeTempDir('sddx-status-missing-');
+  const root = makeTempDir('sddguard-status-missing-');
   const result = expectCliFail(['status'], { cwd: root });
 
   assert.match(result.output, /No SDD installation found/);
